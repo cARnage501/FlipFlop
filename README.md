@@ -1,12 +1,18 @@
 # FlipFlop Engine
 
-Core FlipFlop prompt + helpers, plus a FastAPI wrapper housed separately under `fastapi_app/`. The engine fuses two nouns and returns a 450–500 character hybrid paragraph (optional text-to-image hop).
+FlipFlop is a hybrid-trait synthesis engine: given two nouns, it infers their traits, merges them, and emits a 450–500 character paragraph describing a single fused form. This repo contains:
+
+- The FlipFlop engine spec (LLM-based implementation for now)
+- A FastAPI HTTP interface (`/flipflop`)
+- Optional text-to-image integration
 
 ## Layout
 - `flipflop_engine/` – core prompt, LLM call, length enforcement, optional image hop.
 - `fastapi_app/` – FastAPI wrapper that exposes `/flipflop` and `/healthz`.
 
-## Run the FastAPI wrapper
+## HTTP API (FastAPI)
+
+The FastAPI app in `fastapi_app/main.py` exposes the FlipFlop Engine over HTTP.
 
 ```bash
 python -m venv .venv
