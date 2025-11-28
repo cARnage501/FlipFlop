@@ -1,14 +1,18 @@
-# FlipFlop Engine API
+# FlipFlop Engine
 
-Tiny FastAPI wrapper around the FlipFlop spec. It locks the full specification into the system message, takes two nouns, and returns a 450–500 character hybrid paragraph (optionally piped to a text-to-image service).
+Core FlipFlop prompt + helpers, plus a FastAPI wrapper housed separately under `fastapi_app/`. The engine fuses two nouns and returns a 450–500 character hybrid paragraph (optional text-to-image hop).
 
-## Quick start
+## Layout
+- `flipflop_engine/` – core prompt, LLM call, length enforcement, optional image hop.
+- `fastapi_app/` – FastAPI wrapper that exposes `/flipflop` and `/healthz`.
+
+## Run the FastAPI wrapper
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn fastapi_app.main:app --reload
 ```
 
 POST `http://localhost:8000/flipflop`
@@ -35,6 +39,20 @@ Response:
 
 Health check: `GET /healthz`.
 
+## Use the engine directly (Python)
+
+```python
+from flipflop_engine.core import run_flipflop
+
+paragraph, truncated, image_prompt, image_url = run_flipflop(
+    "flip-flop",
+    "ChatGPT",
+    enforce_length=True,
+    request_image=False,
+)
+print(paragraph)
+```
+
 ## Environment
 
 - `OPENAI_API_KEY` (or `AZURE_OPENAI_API_KEY`) – required.
@@ -45,7 +63,7 @@ Health check: `GET /healthz`.
 
 ## Length contract
 
-If `enforce_length` is true, responses longer than 500 characters are truncated server side; responses shorter than 450 characters trigger a 502. The spec inside the system prompt already states the same limits.
+If `enforce_length` is true, responses longer than 500 characters are truncated server side; responses shorter than 450 characters raise an error. The spec inside `flipflop_engine/core.py` also states the limits.
 
 ## Container
 
@@ -58,5 +76,5 @@ docker run -p 8000:8000 --env OPENAI_API_KEY=... flipflop
 
 ## Notes
 
-- The system prompt in `main.py` is the unedited FlipFlop spec and is injected on every call.
+- The system prompt in `flipflop_engine/core.py` is the unedited FlipFlop spec and is injected on every call.
 - The optional image hop is backend-agnostic; plug in any HTTP T2I endpoint via `IMAGE_API_URL`.
