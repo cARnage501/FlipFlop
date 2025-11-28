@@ -1,18 +1,34 @@
 # FlipFlop Engine
 
-FlipFlop is a hybrid-trait synthesis engine: given two nouns, it infers their traits, merges them, and emits a 450–500 character paragraph describing a single fused form. This repo contains:
+FlipFlop is the engine: given two nouns, it infers their traits, fuses them, and emits one 450–500 character paragraph describing a single integrated form. This repo centers on the engine spec and implementation; the HTTP app is just one way to call it.
 
-- The FlipFlop engine spec (LLM-based implementation for now)
-- A FastAPI HTTP interface (`/flipflop`)
-- Optional text-to-image integration
+## What it does
+- Input: `noun1`, `noun2`
+- Process: infer traits for each noun, merge them into one coherent object
+- Output: exactly one paragraph (3–5 sentences), 450–500 characters, reflecting both nouns across form, materials, surfaces, structure, and behavior
+- Optional: send the paragraph to a text-to-image backend if `IMAGE_API_URL` is configured
 
-## Layout
-- `flipflop_engine/` – core prompt, LLM call, length enforcement, optional image hop.
-- `fastapi_app/` – FastAPI wrapper that exposes `/flipflop` and `/healthz`.
+## Repo map
+- `flipflop_engine/` – the FlipFlop spec, system prompt, LLM call, length enforcement, optional image hop.
+- `fastapi_app/` – a FastAPI interface to the engine (`/flipflop`, `/healthz`). Keep or replace with any interface you like.
 
-## HTTP API (FastAPI)
+## Use the engine directly (Python)
 
-The FastAPI app in `fastapi_app/main.py` exposes the FlipFlop Engine over HTTP.
+```python
+from flipflop_engine.core import run_flipflop
+
+paragraph, truncated, image_prompt, image_url = run_flipflop(
+    "flip-flop",
+    "ChatGPT",
+    enforce_length=True,
+    request_image=False,
+)
+print(paragraph)
+```
+
+## HTTP interface (optional FastAPI)
+
+If you want an HTTP endpoint, the FastAPI app in `fastapi_app/main.py` exposes the engine. Example dev run:
 
 ```bash
 python -m venv .venv
@@ -44,20 +60,6 @@ Response:
 ```
 
 Health check: `GET /healthz`.
-
-## Use the engine directly (Python)
-
-```python
-from flipflop_engine.core import run_flipflop
-
-paragraph, truncated, image_prompt, image_url = run_flipflop(
-    "flip-flop",
-    "ChatGPT",
-    enforce_length=True,
-    request_image=False,
-)
-print(paragraph)
-```
 
 ## Environment
 
