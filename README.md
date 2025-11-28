@@ -1,6 +1,6 @@
-# FlipFlop Engine
+# FlipFlop (Engine)
 
-FlipFlop is the engine: given two nouns, it infers their traits, fuses them, and emits one 450–500 character paragraph describing a single integrated form. This repo centers on the engine spec and implementation; the HTTP app is just one way to call it.
+FlipFlop is the application; here we are building its engine. Given two nouns, it infers their traits, fuses them, and emits one 450–500 character paragraph describing a single integrated form. This repo is about the engine spec and implementation; the FastAPI app is just one interface.
 
 ## What it does
 - Input: `noun1`, `noun2`
